@@ -14,6 +14,17 @@ use Linux so this solution utilises PulseAudio.
 
 This script only depends on `bash`, `sed` and `pactl`.
 
+## Configuration
+
+You can make a new configuration file based on the defaults by using the
+`-C`/`--configuration` command line option, eg.
+
+```bash
+./pulse-mute.bash -C >~/.config/pulse-mute.conf
+```
+
+See the help output below for more information.
+
 ## Help
 
 ```
