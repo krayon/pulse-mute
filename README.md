@@ -10,6 +10,10 @@ As Zoom currently only offers a mute toggle ( :sob: ) alternatives are needed to
 manage the mute option. Thankfully we can always do this at the system level. I
 use Linux so this solution utilises PulseAudio.
 
+## Dependencies
+
+This script only depends on `bash`, `sed` and `pactl`.
+
 ## Help
 
 ```
