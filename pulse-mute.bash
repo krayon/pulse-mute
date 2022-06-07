@@ -27,6 +27,7 @@
 #
 # Required:
 #     pactl
+#     sed
 # Recommended:
 #     -
 
@@ -65,6 +66,11 @@ DEBUG=0
 #   The file to output errors and debug statements (when DEBUG != 0) instead of
 #   stderr.
 #ERROR_LOG="${HOME}/pulse-mute.log"
+
+# PATH_SED
+#   The path to the sed binary. If set to "*", $PATH is used (ie.
+#   "sed" called without a path).
+PATH_SED="*"
 
 # PATH_PACTL
 #   The path to the pactl binary. If set to "*", $PATH is used (ie.
@@ -335,7 +341,7 @@ trapint() {
 
 # Output configuration file
 output_config() {
-    sed -n '/^# \[ CONFIG_START/,/^# \] CONFIG_END/p' <"${0}"
+    "${PATH_SED}" -n '/^# \[ CONFIG_START/,/^# \] CONFIG_END/p' <"${0}"
 } # output_config()
 
 # Debug echo
@@ -379,6 +385,18 @@ for sig in 2 9 10 12; do #{
 done #}
 
 # Check for required commands
+
+# sed (REQUIRED)
+decho "Path for sed set to: '${PATH_SED}'..."
+[ "${PATH_SED}" == "*" ] && PATH_SED="sed"
+PATH_SED="$(check_for_cmd "sed" "${PATH_SED}" 1)" || exit $?
+
+[ -z "${PATH_SED}" ] && {
+    >&2 echo "ERROR: sed is required (set PATH_SED in config?)"
+    exit ${ERR_MISSINGDEP}
+}
+decho "sed path: ${PATH_SED}"
+
 # pactl (REQUIRED)
 decho "Path for pactl set to: '${PATH_PACTL}'..."
 [ "${PATH_PACTL}" == "*" ] && PATH_PACTL="pactl"
@@ -583,7 +601,7 @@ declare -a pa_source_output_names
 #<TAB><TAB>module-stream-restore.id = "source-output-by-application-name:ZOOM VoiceEngine"
 
 get_pa_app_name() {
-    echo "${@}"|sed -n '/^\tProperties:/,${s/^\t\tapplication.name *= *"\(.*\)"$/\1/p}'
+    echo "${@}"|"${PATH_SED}" -n '/^\tProperties:/,${s/^\t\tapplication.name *= *"\(.*\)"$/\1/p}'
 }
 
 get_pa_source_input_id_by_name() {
@@ -611,7 +629,7 @@ get_pa_source_outputs() {
     }
 
     keys=(
-        $(sed -n 's/^Source Output #\([0-9]\+\).*$/\1/p' <<<"${data}")
+        $("${PATH_SED}" -n 's/^Source Output #\([0-9]\+\).*$/\1/p' <<<"${data}")
     )
 
     decho "Retrieved keys(${#keys[@]}): ${keys[@]}"
@@ -619,7 +637,7 @@ get_pa_source_outputs() {
 
     for k in "${keys[@]}"; do #{
         pa_source_outputs[${k}]="$(
-            sed -n '/^Source Output #'"${k}"'$/,/^Source Output/{/^Source Output/!p}' <<<"${data}"
+            "${PATH_SED}" -n '/^Source Output #'"${k}"'$/,/^Source Output/{/^Source Output/!p}' <<<"${data}"
         )"
 
         pa_source_output_names[${k}]="$(get_pa_app_name "${pa_source_outputs[${k}]}")"
