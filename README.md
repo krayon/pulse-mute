@@ -62,9 +62,13 @@ Possible errors that may be returned include:
     ERR_USAGE(64):
         Error in your command line parameters (or possibly config)
     ERR_SOFTWARE(70):
-        pactl called returned an error
+        pactl called returned an error (at least once)
     ERR_NOUSER(67):
-        Unable to find requested source
+        Unable to find (at least one of the) requested source(s)
+
+NOTE: In the event of an error during processing of multiple sources, it is
+possible that some commands work, but an error is still returned. This is only
+valid for the error codes ERR_SOFTWARE and ERR_NOUSER.
 
 Example: pulse-mute.bash 'N:ZOOM VoiceEngine'
 ```

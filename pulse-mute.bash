@@ -314,9 +314,13 @@ Possible errors that may be returned include:
     ERR_USAGE(${ERR_USAGE}):
         Error in your command line parameters (or possibly config)
     ERR_SOFTWARE(${ERR_SOFTWARE}):
-        pactl called returned an error
+        pactl called returned an error (at least once)
     ERR_NOUSER(${ERR_NOUSER}):
-        Unable to find requested source
+        Unable to find (at least one of the) requested source(s)
+
+NOTE: In the event of an error during processing of multiple sources, it is
+possible that some commands work, but an error is still returned. This is only
+valid for the error codes ERR_SOFTWARE and ERR_NOUSER.
 
 Example: ${_binname}
 EOF
