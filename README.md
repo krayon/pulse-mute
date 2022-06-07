@@ -62,7 +62,7 @@ Possible errors that may be returned include:
     ERR_NOUSER(67):
         Unable to find requested source
 
-Example: pulse-mute.bash
+Example: pulse-mute.bash 'N:ZOOM VoiceEngine'
 ```
 
 ----
